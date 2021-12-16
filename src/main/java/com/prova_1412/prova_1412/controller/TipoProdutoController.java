@@ -8,28 +8,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
+@CrossOrigin
 @RestController
-@RequestMapping("type")
-@CrossOrigin(origins = "*")
+@RequestMapping("api/tipos")
 public class TipoProdutoController {
-    @Autowired
-    private final TipoProdutoSevice tipoProdutoSevice;
 
-    public TipoProdutoController(TipoProdutoSevice tipoProdutoSevice) {
-        this.tipoProdutoSevice = tipoProdutoSevice;
+    private TipoProdutoSevice tipoProdutoSevice;
+
+    public TipoProdutoController(TipoProdutoSevice service) {
+        this.tipoProdutoSevice = service;
     }
 
     @GetMapping
-    public ResponseEntity<List<TipoProduto>> index(){
-        List<TipoProduto> tiposProdutos = tipoProdutoSevice.findAll();
-        return new ResponseEntity<>(tiposProdutos, HttpStatus.OK);
+    public ResponseEntity<List<TipoProduto>> listAll() {
+        return ResponseEntity.ok(tipoProdutoSevice.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<TipoProduto> save(@RequestBody TipoProduto tipoProduto){
-        TipoProduto produto = tipoProdutoSevice.save(tipoProduto);
-        return new ResponseEntity<>(produto, HttpStatus.CREATED);
+    public ResponseEntity<TipoProduto> save(@RequestBody TipoProduto tipoProduto) {
+        return new ResponseEntity<>(tipoProdutoSevice.save(tipoProduto), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TipoProduto> update(@PathVariable UUID id, @RequestBody TipoProduto tipoProduto) throws Exception {
+        return new ResponseEntity(tipoProdutoSevice.update(id, tipoProduto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id")UUID id) {
+        return new ResponseEntity<>(tipoProdutoSevice.delete(id), HttpStatus.OK);
+    }
 }

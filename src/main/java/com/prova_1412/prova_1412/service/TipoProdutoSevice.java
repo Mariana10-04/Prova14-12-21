@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -19,8 +20,24 @@ public class TipoProdutoSevice {
         return tipoProdutoRepository.save(tipoProduto);
     }
 
-    public List<TipoProduto> findAll(){
-        List<TipoProduto> tipoProdutos =  tipoProdutoRepository.findAll();
-        return tipoProdutos;
+    public List<TipoProduto> findAll() {
+        List<TipoProduto> tipoProduto = tipoProdutoRepository.findAll();
+        return tipoProduto;
+    }
+
+    public TipoProduto update(UUID id, TipoProduto tipoProduto) {
+        TipoProduto tipoProdutoEncontrado = tipoProdutoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipo de produto não encontrado"));
+
+        tipoProdutoEncontrado.setCategoria(tipoProduto.getCategoria());
+        tipoProdutoRepository.save(tipoProdutoEncontrado);
+        return tipoProdutoEncontrado;
+    }
+
+    public String delete(UUID id) {
+        tipoProdutoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipo de produto não encontrado"));
+        tipoProdutoRepository.deleteById(id);
+        return "Tipo de produto deletado com sucesso!";
     }
 }
